@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maa Krupa Egg Bister</title>
+    <style>
+        /* =========================================
+           1. BRANDING & DESIGN SYSTEM (CSS VARIABLES)
+           ========================================= */
+        :root {
+            --bg-navy: #1A1C25;
+            --bg-charcoal: #2E2B32;
+            --text-light: #EAEBF1;
+            --primary-yellow: #F7C107;
+            --secondary-dark: #5D5200;
+            --danger-red: #ff4757;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-navy);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography & Utilities */
+        h1, h2, h3 { font-weight: 700; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-yellow);
+            color: var(--bg-navy);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #ffda47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(247, 193, 7, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-yellow);
+            color: var(--primary-yellow);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-yellow);
+            color: var(--bg-navy);
+        }
+
+        .btn-danger { background-color: var(--danger-red); color: white; }
+        .btn-danger:hover { background-color: #ff6b7b; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3); }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Dynamic Shapes */
+        .hero-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-yellow) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: float 12s infinite ease-in-out alternate;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .shape1 { width: 40vw; height: 40vw; top: -10%; left: -10%; }
+        .shape2 { width: 50vw; height: 50vw; bottom: -20%; right: -10%; animation-delay: -6s; }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            100% { transform: translateY(-60px) scale(1.1) rotate(15deg); }
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--bg-charcoal);
+            color: var(--text-light);
+            border: 2px solid transparent;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--primary-yellow);
+            color: var(--primary-yellow);
+            box-shadow: 0 0 15px rgba(247, 193, 7, 0.15);
+        }
+
+        /* =========================================
+           2. PUBLIC INTERFACE (RESTAURANT SITE)
+           ========================================= */
+        
+        /* Header */
+        header {
+            background-color: rgba(26, 28, 37, 0.95);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-charcoal);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-yellow);
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-yellow);
+        }
+
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            background: linear-gradient(135deg, var(--bg-navy) 0%, var(--bg-charcoal) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--primary-yellow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-content p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            margin-bottom: 2rem;
+            color: #b0b2c0;
+            max-width: 600px;
+            margin-inline: auto;
+        }
+
+        /* Menu Section & Horizontal Scroll */
+        #menu {
+            padding: 6rem 5%;
+            background-color: var(--bg-navy);
+            min-height: 100vh;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .section-title span {
+            color: var(--primary-yellow);
+        }
+
+        .menu-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 2rem;
+            padding: 6rem 1rem 3rem 1rem;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-yellow) var(--bg-charcoal);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .menu-grid::-webkit-scrollbar { height: 8px; }
+        .menu-grid::-webkit-scrollbar-track { background: var(--bg-charcoal); border-radius: 10px; }
+        .menu-grid::-webkit-scrollbar-thumb { background: var(--primary-yellow); border-radius: 10px; }
+
+        .menu-card {
+            background-color: var(--bg-charcoal);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border-top: 4px solid var(--secondary-dark);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            max-width: 300px;
+            flex-shrink: 0;
+            scroll-snap-align: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .menu-card:hover {
+            border-color: var(--primary-yellow);
+            transform: translateY(-5px);
+        }
+
+        /* Creative Plate Animation */
+        .plate-wrapper {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: -6rem auto 1rem;
+            border: 6px solid var(--primary-yellow);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg-navy);
+        }
+
+        .plate-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .menu-card:hover .plate-wrapper {
+            transform: translateY(-10px) rotate(5deg);
+        }
+
+        .menu-header {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(234, 235, 241, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .menu-title h3 {
+            font-size: 1.3rem;
+            color: var(--primary-yellow);
+            margin-bottom: 0.4rem;
+        }
+
+        .menu-category {
+            font-size: 0.7rem;
+            background-color: var(--secondary-dark);
+            color: var(--text-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .menu-price {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .menu-desc {
+            color: #a0a2b0;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            min-height: 3rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-charcoal);
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .admin-link {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .admin-link:hover { color: var(--primary-yellow); }
+
+        /* =========================================
+           3. MODALS & FORMS
+           ========================================= */
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 11, 16, 0.92);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .login-box {
+            background: var(--bg-charcoal);
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            border-top: 4px solid var(--primary-yellow);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--primary-yellow);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--bg-navy);
+            border: 1px solid #444;
+            color: var(--text-light);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+        }
+
+        .error-msg {
+            color: var(--danger-red);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Cart Styles */
+        #cart-badge {
+            background: var(--danger-red);
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .cart-item-info { flex: 1; text-align: left; }
+        .cart-item-title { font-weight: bold; color: var(--primary-yellow); }
+        .cart-item-price { font-size: 0.9rem; color: #aaa; }
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .qty-btn {
+            background: var(--bg-navy);
+            color: var(--text-light);
+            border: 1px solid #444;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .qty-btn:hover { border-color: var(--primary-yellow); color: var(--primary-yellow); }
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Admin Dashboard Layout */
+        #admin-view {
+            display: none;
+            min-height: 100vh;
+            background-color: var(--bg-navy);
+            padding-top: 80px;
+            padding-bottom: 50px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-charcoal);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid var(--primary-yellow);
+        }
+
+        .admin-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-tables-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .admin-panel {
+            background: var(--bg-charcoal);
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+        }
+
+        .admin-panel h3, .data-table-wrapper h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-yellow);
+            border-bottom: 1px solid var(--secondary-dark);
+            padding-bottom: 0.5rem;
+        }
+
+        .data-table-wrapper {
+            background: var(--bg-charcoal);
+            border-radius: 8px;
+            overflow-x: auto;
+            padding: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--primary-yellow);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-thumb {
+            width: 45px;
+            height: 45px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #444;
+        }
+
+        .order-meta {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        @media (max-width: 900px) {
+            .admin-container { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav ul { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- =========================================
+         PUBLIC VIEW
+         ========================================= -->
+    <div id="public-view">
+        <header>
+            <div class="logo">Maa Krupa Egg Bister</div>
+            <nav>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#" onclick="openCartModal(event)">🛒 Cart <span id="cart-badge">0</span></a></li>
+                    <li><a href="#" onclick="showLoginModal(event)">Admin Portal</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="hero">
+            <div class="hero-shape shape1"></div>
+            <div class="hero-shape shape2"></div>
+            <div class="hero-content reveal">
+                <h1>Maa Krupa<br>Egg Bister</h1>
+                <p>Authentic, spicy, and irresistible egg delicacies crafted to perfection. Experience the best street-style flavors in a premium setting.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="#menu" class="btn">Explore Menu</a>
+                    <button class="btn btn-outline" style="background: rgba(26,28,37,0.8); border-color: #a29bfe; color: #a29bfe;" onclick="openAiChefModal()">✨ Ask AI Chef</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu">
+            <h2 class="section-title reveal">Our <span>Menu</span></h2>
+            
+            <div class="category-filters reveal">
+                <button class="filter-btn active" onclick="filterMenu('All')">All</button>
+                <button class="filter-btn" onclick="filterMenu('Starter')">Starter</button>
+                <button class="filter-btn" onclick="filterMenu('Main')">Main</button>
+                <button class="filter-btn" onclick="filterMenu('Today Special')">Today Special</button>
+                <button class="filter-btn" onclick="filterMenu('Coldrinks')">Coldrinks</button>
+                <button class="filter-btn" onclick="filterMenu('Combo Offers')">Combo Offers</button>
+            </div>
+
+            <div class="menu-grid" id="public-menu-grid">
+                <!-- Menu items injected via JavaScript -->
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; <span id="year"></span> Maa Krupa Egg Bister. All rights reserved.</p>
+            <span class="admin-link" onclick="showLoginModal(event)">Admin Login</span>
+        </footer>
+    </div>
+
+    <!-- =========================================
+         LOGIN MODAL
+         ========================================= -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <p style="font-size:0.8rem; color:#888; text-align:center; margin-bottom:1.5rem;">Hint: admin / admin123</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-control" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                    <div class="error-msg" id="login-error">Invalid credentials. Please try again.</div>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Login</button>
+                <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;" onclick="closeLoginModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         AI CHEF MODAL
+         ========================================= -->
+    <div class="modal-overlay" id="ai-chef-modal">
+        <div class="login-box" style="max-width: 500px;">
+            <h2 style="color: #a29bfe;">✨ AI Chef Assistant</h2>
+            <p style="text-align:center; color:#ccc; margin-bottom: 1rem; font-size: 0.9rem;">Tell me what you're craving, and I'll find the perfect dish for you!</p>
+            <div class="form-group">
+                <textarea id="ai-craving-input" class="form-control" rows="3" placeholder="E.g., I'm really hungry and want something spicy with lots of cheese!"></textarea>
+            </div>
+            <button type="button" class="btn" style="width: 100%; background-color: #a29bfe; color: var(--bg-navy);" id="ai-chef-btn" onclick="askAiChef()">Get Recommendation</button>
+            
+            <div id="ai-chef-result" style="display: none; margin-top: 1.5rem; padding: 1rem; background: var(--bg-navy); border-radius: 8px; border: 1px solid #a29bfe;">
+                <h4 id="ai-dish-name" style="color: var(--primary-yellow); margin-bottom: 0.5rem;"></h4>
+                <p id="ai-dish-reason" style="font-size: 0.9rem; margin-bottom: 1rem;"></p>
+                <button id="ai-add-cart-btn" class="btn btn-outline" style="width: 100%; border-color:#a29bfe; color:#a29bfe;" onmouseover="this.style.background='#a29bfe'; this.style.color='var(--bg-navy)';" onmouseout="this.style.background='transparent'; this.style.color='#a29bfe';">Add to Cart</button>
+            </div>
+            <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;" onclick="closeAiChefModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- =========================================
+         CART MODAL
+         ========================================= -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="login-box" style="max-width: 500px;">
+            <h2>Your Cart</h2>
+            <div id="cart-items-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+                <!-- Cart items will go here -->
+            </div>
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span>₹<span id="cart-total-price">0</span></span>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                <button type="button" class="btn" style="flex: 1;" onclick="proceedToCheckout()">Checkout</button>
+                <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeCartModal()">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         CHECKOUT MODAL
+         ========================================= -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="login-box">
+            <h2>Place Order</h2>
+            <div id="checkout-item-details" style="text-align:center; color: var(--primary-yellow); margin-bottom: 1.5rem; font-weight: bold; font-size: 1.1rem;"></div>
+            
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="cust-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="cust-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="cust-address" class="form-control" rows="2" required></textarea>
+                </div>
+                
+                <div style="margin: 1.5rem 0; padding: 1rem; background: var(--bg-navy); border-radius: 8px;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--primary-yellow); font-weight: bold;">Payment Method</label>
+                    <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="payment" value="cod" checked onchange="toggleQR(false)"> Cash on Delivery
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="radio" name="payment" value="upi" onchange="toggleQR(true)"> Scan to Pay
+                    </label>
+                    
+                    <div id="qr-container" style="display: none; margin-top: 1rem; text-align: center;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=MaaKrupaEggBisterPayment" alt="Payment QR" style="border: 5px solid white; border-radius: 5px; width: 150px;">
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #888;">Scan with any UPI App</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn" style="flex: 1;">Confirm Order</button>
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeCheckoutModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         ADMIN VIEW
+         ========================================= -->
+    <div id="admin-view">
+        <header class="admin-header">
+            <div class="logo">Admin Portal</div>
+            <button class="btn btn-outline" onclick="logout()">Logout</button>
+        </header>
+
+        <div class="admin-container">
+            <div class="admin-panel">
+                <h3 id="form-title">Add New Dish</h3>
+                <form id="menu-form">
+                    <div class="form-group" style="padding: 1rem; background: rgba(162, 155, 254, 0.1); border: 1px dashed #a29bfe; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <label style="color: #a29bfe; margin-bottom: 0.8rem; display: block; font-weight: bold;">✨ AI Magic Dish Creator</label>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <input type="text" id="ai-dish-idea" class="form-control" style="flex: 1; min-width: 200px;" placeholder="E.g., Spicy wrap with double egg and cheese">
+                            <button type="button" class="btn" style="background: #a29bfe; color: var(--bg-navy); white-space: nowrap;" id="ai-magic-btn" onclick="generateAiDish()">Auto-Fill</button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="item-id">
+                    <div class="form-group">
+                        <label>Dish Name</label>
+                        <input type="text" id="item-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" id="item-price" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" id="item-image" class="form-control" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="item-category" class="form-control" required>
+                            <option value="Starter">Starter</option>
+                            <option value="Main">Main</option>
+                            <option value="Today Special">Today Special</option>
+                            <option value="Coldrinks">Coldrinks</option>
+                            <option value="Combo Offers">Combo Offers</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="item-desc" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;" id="submit-btn">Save Dish</button>
+                    <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; display: none;" id="cancel-edit-btn" onclick="resetForm()">Cancel Edit</button>
+                </form>
+            </div>
+
+            <!-- Wrapping both tables in a flex container -->
+            <div class="admin-tables-container">
+                <div class="data-table-wrapper">
+                    <h3>Manage Menu</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Img</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="data-table-wrapper">
+                    <h3>Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Customer Info</th>
+                                <th>Order Details</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Menu Storage
+        const MENU_STORAGE_KEY = 'maaKrupaMenuData_v3';
+        const defaultMenu = [
+            { id: 1, name: "Special Egg Gotola", price: "180", category: "Today Special", desc: "Our signature dish! A rich blend of boiled eggs and secret gravy.", image: "https://images.unsplash.com/photo-1628191010210-a59de33e5941?w=400" },
+            { id: 2, name: "Cheese Omelet", price: "110", category: "Starter", desc: "Fluffy double-egg omelet loaded with premium cheese.", image: "https://images.unsplash.com/photo-1510693042738-732503d719ce?w=400" },
+            { id: 3, name: "Surti Egg Bhurji", price: "130", category: "Starter", desc: "Classic scrambled eggs with authentic spices.", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400" },
+            { id: 4, name: "Australian Fry", price: "160", category: "Main", desc: "Crispy fried eggs tossed in tangy garlic sauce.", image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400" },
+            { id: 5, name: "Masala Cola", price: "40", category: "Coldrinks", desc: "Chilled cola enhanced with homemade spices.", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400" }
+        ];
+
+        let menuItems = JSON.parse(localStorage.getItem(MENU_STORAGE_KEY)) || [...defaultMenu];
+        function saveMenuData() { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuItems)); }
+
+        // Orders Storage
+        const ORDERS_STORAGE_KEY = 'maaKrupaOrdersData_v1';
+        let ordersData = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY)) || [];
+        function saveOrdersData() { localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(ordersData)); }
+
+        // Cart Storage
+        const CART_STORAGE_KEY = 'maaKrupaCart_v1';
+        let cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
+        function saveCartData() { 
+            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); 
+            updateCartBadge();
+        }
+
+        // ==========================================
+        // ✨ GEMINI API INTEGRATION
+        // ==========================================
+        const apiKey = ""; 
+        
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(res => setTimeout(res, delays[i]));
+                }
+            }
+        }
+
+        async function callGeminiJSON(systemInstruction, userPrompt, schema) {
+            const MODEL_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                contents: [{ parts: [{ text: userPrompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: schema
+                }
+            };
+            
+            const result = await fetchWithRetry(MODEL_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) throw new Error("No response from Gemini");
+            return JSON.parse(text);
+        }
+
+        // --- Feature 1: AI Chef ---
+        function openAiChefModal() {
+            document.getElementById('ai-chef-modal').classList.add('active');
+        }
+        function closeAiChefModal() {
+            document.getElementById('ai-chef-modal').classList.remove('active');
+            document.getElementById('ai-chef-result').style.display = 'none';
+            document.getElementById('ai-craving-input').value = '';
+        }
+
+        async function askAiChef() {
+            const input = document.getElementById('ai-craving-input').value;
+            if(!input.trim()) return alert("Please tell the AI Chef what you're craving!");
+            
+            const btn = document.getElementById('ai-chef-btn');
+            btn.innerText = "✨ Thinking...";
+            btn.disabled = true;
+            
+            try {
+                const schema = {
+                    type: "OBJECT",
+                    properties: {
+                        recommendedDishId: { type: "INTEGER", description: "The ID of the recommended dish from the menu" },
+                        reason: { type: "STRING", description: "A fun, enthusiastic, 2-sentence reason explaining why this dish perfectly matches their craving." }
+                    },
+                    required: ["recommendedDishId", "reason"]
+                };
+                
+                const systemPrompt = "You are the friendly and enthusiastic AI Chef for 'Maa Krupa Egg Bister'. You excel at pairing customer cravings with the perfect dish from the menu. Ensure the response is highly appetizing.";
+                const userPrompt = `Customer craving: "${input}"\n\nCurrent Menu (JSON):\n${JSON.stringify(menuItems)}\n\nAnalyze the menu and pick the single best dish that matches.`;
+                
+                const response = await callGeminiJSON(systemPrompt, userPrompt, schema);
+                
+                const dish = menuItems.find(i => i.id === response.recommendedDishId);
+                if(dish) {
+                    document.getElementById('ai-dish-name').innerText = `✨ ${dish.name} (₹${dish.price})`;
+                    document.getElementById('ai-dish-reason').innerText = response.reason;
+                    const addCartBtn = document.getElementById('ai-add-cart-btn');
+                    addCartBtn.onclick = () => {
+                        addToCart(dish.id);
+                        closeAiChefModal();
+                        openCartModal();
+                    };
+                    document.getElementById('ai-chef-result').style.display = 'block';
+                } else {
+                    alert("Oops, the AI Chef got confused. Try again!");
+                }
+            } catch (error) {
+                alert("The AI Chef is currently busy in the kitchen. Please try again later!");
+                console.error(error);
+            } finally {
+                btn.innerText = "Get Recommendation";
+                btn.disabled = false;
+            }
+        }
+
+        // --- Feature 2: Admin Magic Dish Creator ---
+        async function generateAiDish() {
+            const idea = document.getElementById('ai-dish-idea').value;
+            if(!idea.trim()) return alert("Enter a dish idea first!");
+            
+            const btn = document.getElementById('ai-magic-btn');
+            btn.innerText = "✨ Generating...";
+            btn.disabled = true;
+            
+            try {
+                const schema = {
+                    type: "OBJECT",
+                    properties: {
+                        name: { type: "STRING", description: "Catchy, appetizing name for the dish" },
+                        price: { type: "INTEGER", description: "Reasonable price in INR (e.g. 150)" },
+                        category: { type: "STRING", description: "One of: Starter, Main, Today Special, Coldrinks, Combo Offers" },
+                        desc: { type: "STRING", description: "Tantalizing 1-2 sentence description highlighting the flavors." }
+                    },
+                    required: ["name", "price", "category", "desc"]
+                };
+                
+                const systemPrompt = "You are a master menu copywriter for an authentic Indian egg street food restaurant. Create exciting, descriptive, and culturally appropriate dish details.";
+                const userPrompt = `Create a menu entry for this idea: "${idea}"`;
+                
+                const response = await callGeminiJSON(systemPrompt, userPrompt, schema);
+                
+                document.getElementById('item-name').value = response.name || '';
+                document.getElementById('item-price').value = response.price || '';
+                
+                // Ensure category matches exactly with the dropdown options
+                const validCategories = ["Starter", "Main", "Today Special", "Coldrinks", "Combo Offers"];
+                if(validCategories.includes(response.category)) {
+                    document.getElementById('item-category').value = response.category;
+                }
+                
+                document.getElementById('item-desc').value = response.desc || '';
+                
+                // Add a default placeholder image if the field is empty
+                if(!document.getElementById('item-image').value) {
+                    document.getElementById('item-image').value = "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400";
+                }
+                
+                alert("✨ Magic fill complete! Feel free to edit the details before saving.");
+            } catch (error) {
+                alert("Magic generation failed. Please try again.");
+                console.error(error);
+            } finally {
+                btn.innerText = "Auto-Fill";
+                btn.disabled = false;
+            }
+        }
+
+        let currentCategory = 'All';
+
+        function filterMenu(category) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.trim() === category);
+            });
+            renderPublicMenu();
+        }
+
+        function renderPublicMenu() {
+            const grid = document.getElementById('public-menu-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            const filtered = currentCategory === 'All' ? menuItems : menuItems.filter(i => i.category === currentCategory);
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<p style="width:100%; text-align:center; padding: 2rem;">No items found.</p>`;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'menu-card reveal';
+                div.style.transitionDelay = `${(index % 4) * 0.1}s`;
+                div.innerHTML = `
+                    <div class="plate-wrapper"><img src="${item.image}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400'"></div>
+                    <div class="menu-header">
+                        <div class="menu-title"><h3>${item.name}</h3><span class="menu-category">${item.category}</span></div>
+                    </div>
+                    <div class="menu-price">₹${item.price}</div>
+                    <p class="menu-desc">${item.desc}</p>
+                    <button class="btn btn-outline" onclick="addToCart(${item.id})">Add to Cart</button>
+                `;
+                grid.appendChild(div);
+            });
+            initScrollObserver();
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            menuItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${item.image}" class="admin-thumb" onerror="this.src='https://images.unsplash.com/photo-1525351484163-7529414344d8?w=100'"></td>
+                    <td>${item.name}</td>
+                    <td><span class="menu-category">${item.category}</span></td>
+                    <td>₹${item.price}</td>
+                    <td class="action-btns">
+                        <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick="editItem(${item.id})">Edit</button>
+                        <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick="deleteItem(${item.id})">Del</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('admin-orders-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            if (ordersData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem;">No orders have been placed yet.</td></tr>`;
+                return;
+            }
+
+            ordersData.forEach(order => {
+                // Compatibility for old single-item orders
+                let itemsListHtml = '';
+                let displayTotal = 0;
+                
+                if (order.items && Array.isArray(order.items)) {
+                    itemsListHtml = order.items.map(i => `<strong>${i.qty}x</strong> ${i.name}`).join('<br>');
+                    displayTotal = order.totalPrice;
+                } else {
+                    itemsListHtml = `<strong>1x</strong> ${order.itemName || 'Unknown Item'}`;
+                    displayTotal = order.itemPrice || 0;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="order-meta">${order.date}</td>
+                    <td>
+                        <strong style="color: var(--primary-yellow);">${order.customerName}</strong><br>
+                        <span style="font-size: 0.85rem; color: #ccc;">📞 ${order.customerPhone}</span><br>
+                        <span style="font-size: 0.85rem; color: #888;">📍 ${order.customerAddress}</span>
+                    </td>
+                    <td><div style="font-size: 0.9rem;">${itemsListHtml}</div></td>
+                    <td><span class="menu-category" style="background-color: ${order.paymentMethod === 'UPI' ? '#27ae60' : '#e67e22'};">${order.paymentMethod}</span></td>
+                    <td style="font-weight: bold; font-size: 1.2rem;">₹${displayTotal}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        const menuForm = document.getElementById('menu-form');
+        if(menuForm) {
+            menuForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('item-id').value;
+                const newItem = {
+                    id: id ? parseInt(id) : Date.now(),
+                    name: document.getElementById('item-name').value,
+                    price: document.getElementById('item-price').value,
+                    image: document.getElementById('item-image').value,
+                    category: document.getElementById('item-category').value,
+                    desc: document.getElementById('item-desc').value
+                };
+                if(id) {
+                    const idx = menuItems.findIndex(i => i.id == id);
+                    menuItems[idx] = newItem;
+                } else {
+                    menuItems.push(newItem);
+                }
+                saveMenuData(); renderAdminTable(); renderPublicMenu(); resetForm();
+            });
+        }
+
+        function editItem(id) {
+            const item = menuItems.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('item-id').value = item.id;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-image').value = item.image;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-desc').value = item.desc;
+            document.getElementById('form-title').innerText = "Edit Dish";
+            document.getElementById('submit-btn').innerText = "Update Dish";
+            document.getElementById('cancel-edit-btn').style.display = "block";
+        }
+
+        function deleteItem(id) {
+            if(confirm("Delete this item?")) {
+                menuItems = menuItems.filter(i => i.id !== id);
+                saveMenuData(); renderAdminTable(); renderPublicMenu();
+            }
+        }
+
+        function resetForm() {
+            if(menuForm) menuForm.reset();
+            document.getElementById('item-id').value = "";
+            document.getElementById('form-title').innerText = "Add New Dish";
+            document.getElementById('submit-btn').innerText = "Save Dish";
+            document.getElementById('cancel-edit-btn').style.display = "none";
+        }
+
+        // --- CART & CHECKOUT LOGIC ---
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-badge');
+            if(badge) {
+                const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+                badge.innerText = totalItems;
+            }
+        }
+
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            if(!item) return;
+            
+            const existingItem = cart.find(i => i.id === id);
+            if(existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            saveCartData();
+            
+            alert(`${item.name} added to cart!`);
+        }
+
+        function updateCartQty(id, delta) {
+            const itemIndex = cart.findIndex(i => i.id === id);
+            if(itemIndex > -1) {
+                cart[itemIndex].qty += delta;
+                if(cart[itemIndex].qty <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+                saveCartData();
+                renderCartModal();
+            }
+        }
+
+        function openCartModal(e) {
+            if(e) e.preventDefault();
+            renderCartModal();
+            document.getElementById('cart-modal').classList.add('active');
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').classList.remove('active');
+        }
+
+        function renderCartModal() {
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total-price');
+            
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#888; padding: 2rem 0;">Your cart is empty.</p>';
+                totalEl.innerText = '0';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = parseInt(item.price) * item.qty;
+                total += itemTotal;
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">₹${item.price} x ${item.qty}</div>
+                        </div>
+                        <div class="cart-qty-controls">
+                            <button class="qty-btn" onclick="updateCartQty(${item.id}, -1)">-</button>
+                            <span style="font-weight:bold; min-width: 20px; text-align:center;">${item.qty}</span>
+                            <button class="qty-btn" onclick="updateCartQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = total;
+        }
+
+        function proceedToCheckout() {
+            if(cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            closeCartModal();
+            
+            let total = cart.reduce((sum, item) => sum + (parseInt(item.price) * item.qty), 0);
+            let itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            document.getElementById('checkout-item-details').innerHTML = `Ordering <strong>${itemCount}</strong> items.<br>Total Amount: <strong>₹${total}</strong>`;
+            document.getElementById('checkout-modal').classList.add('active');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.remove('active');
+            document.getElementById('checkout-form').reset();
+            toggleQR(false);
+        }
+
+        function toggleQR(show) { document.getElementById('qr-container').style.display = show ? 'block' : 'none'; }
+
+        const checkoutForm = document.getElementById('checkout-form');
+        if(checkoutForm) {
+            checkoutForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (cart.length === 0) {
+                    alert("Your cart is empty. Please add items before checking out.");
+                    return;
+                }
+
+                // Gather customer data
+                const customerName = document.getElementById('cust-name').value;
+                const customerPhone = document.getElementById('cust-phone').value;
+                const customerAddress = document.getElementById('cust-address').value;
+                const paymentMethod = document.querySelector('input[name="payment"]:checked').value.toUpperCase();
+
+                let totalPrice = cart.reduce((sum, item) => sum + (parseInt(item.price) * item.qty), 0);
+
+                // Create Order Object
+                const newOrder = {
+                    id: Date.now(),
+                    date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
+                    customerName,
+                    customerPhone,
+                    customerAddress,
+                    paymentMethod,
+                    items: [...cart], // Deep copy cart
+                    totalPrice: totalPrice
+                };
+
+                // Add to array
+                ordersData.unshift(newOrder);
+                saveOrdersData();
+
+                // Clear cart
+                cart = [];
+                saveCartData();
+
+                alert("Order Placed Successfully!");
+                closeCheckoutModal();
+
+                // Update admin table if open
+                if (document.getElementById('admin-view').style.display === 'block') {
+                    renderOrdersTable();
+                }
+            });
+        }
+
+        function showLoginModal(e) { if(e) e.preventDefault(); document.getElementById('login-modal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); }
+
+        const loginForm = document.getElementById('login-form');
+        if(loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const u = document.getElementById('username').value;
+                const p = document.getElementById('password').value;
+                if(u === 'admin' && p === 'admin123') {
+                    closeLoginModal();
+                    document.getElementById('public-view').style.display = 'none';
+                    document.getElementById('admin-view').style.display = 'block';
+                    renderAdminTable();
+                    renderOrdersTable(); // Render orders when logging in
+                } else {
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            });
+        }
+
+        function logout() {
+            document.getElementById('admin-view').style.display = 'none';
+            document.getElementById('public-view').style.display = 'block';
+            renderPublicMenu();
+        }
+
+        let observer;
+        function initScrollObserver() {
+            if(observer) observer.disconnect();
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        window.onload = () => {
+            renderPublicMenu();
+            initScrollObserver();
+            updateCartBadge();
+        };
+    </script>
+</body>
+</html>
