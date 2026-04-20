@@ -161,6 +161,7 @@
         nav ul {
             display: flex;
             gap: 2rem;
+            align-items: center;
         }
 
         nav a {
@@ -170,6 +171,25 @@
 
         nav a:hover {
             color: var(--primary-yellow);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 101;
+            padding: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--primary-yellow);
+            transition: 0.3s;
+            border-radius: 3px;
         }
 
         /* Hero Section */
@@ -552,12 +572,39 @@
             color: #aaa;
         }
 
+        /* Responsive Breakpoints */
         @media (max-width: 900px) {
             .admin-container { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            nav ul { display: none; }
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: fixed;
+                right: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--bg-navy);
+                width: 70%;
+                height: calc(100vh - 70px);
+                padding: 2rem;
+                gap: 1.5rem;
+                transition: 0.3s ease;
+                border-left: 1px solid var(--bg-charcoal);
+                align-items: flex-start;
+                box-shadow: -10px 0 20px rgba(0,0,0,0.5);
+            }
+
+            nav ul.active {
+                right: 0;
+            }
+
+            .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+            .menu-toggle.active span:nth-child(2) { opacity: 0; }
+            .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
         }
 
     </style>
@@ -570,12 +617,19 @@
     <div id="public-view">
         <header>
             <div class="logo">Maa Krupa Egg Bister</div>
+            
+            <div class="menu-toggle" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
             <nav>
-                <ul>
-                    <li><a href="#hero">Home</a></li>
-                    <li><a href="#menu">Menu</a></li>
-                    <li><a href="#" onclick="openCartModal(event)">🛒 Cart <span id="cart-badge">0</span></a></li>
-                    <li><a href="#" onclick="showLoginModal(event)">Admin Portal</a></li>
+                <ul id="nav-list">
+                    <li><a href="#hero" onclick="closeMobileMenu()">Home</a></li>
+                    <li><a href="#menu" onclick="closeMobileMenu()">Menu</a></li>
+                    <li><a href="#" onclick="openCartModal(event); closeMobileMenu()">🛒 Cart <span id="cart-badge">0</span></a></li>
+                    <li><a href="#" onclick="showLoginModal(event); closeMobileMenu()">Admin Portal</a></li>
                 </ul>
             </nav>
         </header>
@@ -778,7 +832,6 @@
                 </form>
             </div>
 
-            <!-- Wrapping both tables in a flex container -->
             <div class="admin-tables-container">
                 <div class="data-table-wrapper">
                     <h3>Manage Menu</h3>
@@ -817,6 +870,21 @@
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Navigation Toggle Logic
+        function toggleMobileMenu() {
+            const navList = document.getElementById('nav-list');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            navList.classList.toggle('active');
+            menuBtn.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const navList = document.getElementById('nav-list');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            navList.classList.remove('active');
+            menuBtn.classList.remove('active');
+        }
 
         // Menu Storage
         const MENU_STORAGE_KEY = 'maaKrupaMenuData_v3';
@@ -970,7 +1038,6 @@
                 document.getElementById('item-name').value = response.name || '';
                 document.getElementById('item-price').value = response.price || '';
                 
-                // Ensure category matches exactly with the dropdown options
                 const validCategories = ["Starter", "Main", "Today Special", "Coldrinks", "Combo Offers"];
                 if(validCategories.includes(response.category)) {
                     document.getElementById('item-category').value = response.category;
@@ -978,7 +1045,6 @@
                 
                 document.getElementById('item-desc').value = response.desc || '';
                 
-                // Add a default placeholder image if the field is empty
                 if(!document.getElementById('item-image').value) {
                     document.getElementById('item-image').value = "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400";
                 }
@@ -1064,7 +1130,6 @@
             }
 
             ordersData.forEach(order => {
-                // Compatibility for old single-item orders
                 let itemsListHtml = '';
                 let displayTotal = 0;
                 
@@ -1249,13 +1314,8 @@
         if(checkoutForm) {
             checkoutForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (cart.length === 0) return alert("Cart is empty!");
 
-                if (cart.length === 0) {
-                    alert("Your cart is empty. Please add items before checking out.");
-                    return;
-                }
-
-                // Gather customer data
                 const customerName = document.getElementById('cust-name').value;
                 const customerPhone = document.getElementById('cust-phone').value;
                 const customerAddress = document.getElementById('cust-address').value;
@@ -1263,7 +1323,6 @@
 
                 let totalPrice = cart.reduce((sum, item) => sum + (parseInt(item.price) * item.qty), 0);
 
-                // Create Order Object
                 const newOrder = {
                     id: Date.now(),
                     date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
@@ -1271,22 +1330,16 @@
                     customerPhone,
                     customerAddress,
                     paymentMethod,
-                    items: [...cart], // Deep copy cart
+                    items: [...cart],
                     totalPrice: totalPrice
                 };
 
-                // Add to array
                 ordersData.unshift(newOrder);
                 saveOrdersData();
-
-                // Clear cart
                 cart = [];
                 saveCartData();
-
                 alert("Order Placed Successfully!");
                 closeCheckoutModal();
-
-                // Update admin table if open
                 if (document.getElementById('admin-view').style.display === 'block') {
                     renderOrdersTable();
                 }
@@ -1307,7 +1360,7 @@
                     document.getElementById('public-view').style.display = 'none';
                     document.getElementById('admin-view').style.display = 'block';
                     renderAdminTable();
-                    renderOrdersTable(); // Render orders when logging in
+                    renderOrdersTable();
                 } else {
                     document.getElementById('login-error').style.display = 'block';
                 }
